@@ -1,0 +1,1499 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Enterprise Investment Portfolio Management System</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f8fafc;
+        --surface: #ffffff;
+        --surface-2: #eef3f8;
+        --ink: #162033;
+        --muted: #64748b;
+        --line: #d9e2ec;
+        --primary: #0F172A;
+        --primary-2: #1E293B;
+        --teal: #10B981;
+        --green: #10B981;
+        --amber: #F59E0B;
+        --red: #be123c;
+        --violet: #6d28d9;
+        --shadow: 0 18px 46px rgba(22, 32, 51, 0.08);
+      }
+
+      [data-theme="dark"] {
+        color-scheme: dark;
+        --bg: #101827;
+        --surface: #162235;
+        --surface-2: #1f2b3d;
+        --ink: #eef4ff;
+        --muted: #a8b6c8;
+        --line: #2b3a51;
+        --primary: #60a5fa;
+        --primary-2: #3b82f6;
+        --teal: #2dd4bf;
+        --green: #4ade80;
+        --amber: #fbbf24;
+        --red: #fb7185;
+        --violet: #a78bfa;
+        --shadow: 0 20px 50px rgba(0, 0, 0, 0.22);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-size: 14px;
+      }
+
+      button,
+      input,
+      select,
+      textarea {
+        font: inherit;
+      }
+
+      button {
+        cursor: pointer;
+      }
+
+      .app-shell {
+        display: grid;
+        grid-template-columns: 280px minmax(0, 1fr);
+        min-height: 100vh;
+      }
+
+      .sidebar {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow: auto;
+        border-right: 1px solid var(--line);
+        background: var(--surface);
+        padding: 20px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 22px;
+      }
+
+      .brand-mark {
+        display: grid;
+        place-items: center;
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: #173b78;
+        color: white;
+        font-weight: 800;
+      }
+
+      .brand strong {
+        display: block;
+        font-size: 15px;
+      }
+
+      .brand span,
+      .eyebrow,
+      .muted {
+        color: var(--muted);
+      }
+
+      .nav-section {
+        margin: 18px 0 8px;
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .nav-button {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        min-height: 42px;
+        margin: 4px 0;
+        padding: 10px 12px;
+        border: 1px solid transparent;
+        border-radius: 7px;
+        background: transparent;
+        color: var(--muted);
+        text-align: left;
+      }
+
+      .nav-button svg {
+        width: 18px;
+        height: 18px;
+        flex: 0 0 auto;
+      }
+
+      .nav-button.active,
+      .nav-button:hover {
+        border-color: color-mix(in srgb, var(--primary) 24%, transparent);
+        background: color-mix(in srgb, var(--primary) 10%, transparent);
+        color: var(--primary-2);
+      }
+
+      .sidebar-card {
+        margin-top: 22px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface-2);
+        padding: 14px;
+      }
+
+      .phase-list {
+        display: grid;
+        gap: 9px;
+        margin: 12px 0 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .phase-list li {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 999px;
+        background: var(--line);
+      }
+
+      .dot.done {
+        background: var(--green);
+      }
+
+      .dot.now {
+        background: var(--primary);
+      }
+
+      .main {
+        min-width: 0;
+      }
+
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        min-height: 72px;
+        border-bottom: 1px solid var(--line);
+        background: color-mix(in srgb, var(--surface) 92%, transparent);
+        padding: 14px 26px;
+        backdrop-filter: blur(14px);
+      }
+
+      .mobile-menu {
+        display: none;
+      }
+
+      .breadcrumbs {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+
+      h1 {
+        margin-top: 4px;
+        font-size: 25px;
+        line-height: 1.2;
+      }
+
+      h2 {
+        font-size: 18px;
+      }
+
+      h3 {
+        font-size: 14px;
+      }
+
+      .top-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .search {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: min(340px, 35vw);
+        height: 40px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        padding: 0 12px;
+      }
+
+      .search input {
+        width: 100%;
+        border: 0;
+        outline: 0;
+        background: transparent;
+        color: var(--ink);
+      }
+
+      .icon-button,
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 40px;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        background: var(--surface);
+        color: var(--ink);
+        padding: 0 12px;
+        font-weight: 700;
+      }
+
+      .icon-button {
+        width: 40px;
+        padding: 0;
+      }
+
+      .button.primary {
+        border-color: var(--primary-2);
+        background: var(--primary-2);
+        color: white;
+      }
+
+      .content {
+        padding: 24px 26px 42px;
+      }
+
+      .filters {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(130px, 1fr));
+        gap: 12px;
+        margin-bottom: 18px;
+      }
+
+      .field label {
+        display: block;
+        margin-bottom: 6px;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .field select,
+      .field input,
+      .field textarea {
+        width: 100%;
+        min-height: 38px;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        background: var(--surface);
+        color: var(--ink);
+        padding: 8px 10px;
+        outline: 0;
+      }
+
+      .field textarea {
+        min-height: 78px;
+        resize: vertical;
+      }
+
+      .panel {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+      }
+
+      .panel-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 16px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .panel-body {
+        padding: 16px;
+      }
+
+      .grid {
+        display: grid;
+        gap: 16px;
+      }
+
+      .kpi-grid {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+      }
+
+      .analytics-grid {
+        grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.65fr);
+      }
+
+      .three-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .two-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .kpi {
+        padding: 16px;
+      }
+
+      .kpi-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .kpi-value {
+        margin-top: 10px;
+        color: var(--ink);
+        font-size: 24px;
+        font-weight: 800;
+      }
+
+      .kpi-note {
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .trend {
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .trend.good {
+        color: var(--green);
+      }
+
+      .trend.warn {
+        color: var(--amber);
+      }
+
+      .trend.bad {
+        color: var(--red);
+      }
+
+      .chart {
+        width: 100%;
+        min-height: 280px;
+      }
+
+      .bar-row {
+        display: grid;
+        grid-template-columns: 110px 1fr 52px;
+        gap: 10px;
+        align-items: center;
+        margin: 12px 0;
+      }
+
+      .bar-track {
+        height: 10px;
+        border-radius: 999px;
+        background: var(--surface-2);
+        overflow: hidden;
+      }
+
+      .bar {
+        height: 100%;
+        border-radius: inherit;
+        background: var(--primary);
+      }
+
+      .status-pill,
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        min-height: 24px;
+        border-radius: 999px;
+        padding: 3px 9px;
+        font-size: 12px;
+        font-weight: 800;
+        white-space: nowrap;
+      }
+
+      .badge {
+        border: 1px solid var(--line);
+        background: var(--surface-2);
+        color: var(--muted);
+      }
+
+      .status-running {
+        background: color-mix(in srgb, var(--primary) 14%, transparent);
+        color: var(--primary-2);
+      }
+
+      .status-completed {
+        background: color-mix(in srgb, var(--green) 16%, transparent);
+        color: var(--green);
+      }
+
+      .status-pending,
+      .status-review {
+        background: color-mix(in srgb, var(--amber) 18%, transparent);
+        color: var(--amber);
+      }
+
+      .status-overdue,
+      .status-critical {
+        background: color-mix(in srgb, var(--red) 15%, transparent);
+        color: var(--red);
+      }
+
+      .table-wrap {
+        overflow: auto;
+      }
+
+      table {
+        width: 100%;
+        min-width: 880px;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        vertical-align: middle;
+      }
+
+      th {
+        position: sticky;
+        top: 0;
+        background: var(--surface);
+        color: var(--muted);
+        font-size: 11px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      tbody tr:hover {
+        background: color-mix(in srgb, var(--primary) 6%, transparent);
+      }
+
+      .progress {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+      }
+
+      .progress-track {
+        width: 92px;
+        height: 8px;
+        border-radius: 999px;
+        background: var(--surface-2);
+        overflow: hidden;
+      }
+
+      .progress-fill {
+        height: 100%;
+        border-radius: inherit;
+        background: var(--teal);
+      }
+
+      .timeline {
+        display: grid;
+        gap: 12px;
+      }
+
+      .timeline-item {
+        display: grid;
+        grid-template-columns: 18px 1fr;
+        gap: 10px;
+      }
+
+      .timeline-node {
+        width: 12px;
+        height: 12px;
+        margin-top: 4px;
+        border: 3px solid color-mix(in srgb, var(--primary) 30%, transparent);
+        border-radius: 999px;
+        background: var(--primary);
+      }
+
+      .timeline-card {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface-2);
+        padding: 12px;
+      }
+
+      .timeline-card p,
+      .small {
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.45;
+      }
+
+      .workflow {
+        display: grid;
+        grid-template-columns: repeat(8, minmax(120px, 1fr));
+        gap: 10px;
+        overflow: auto;
+        padding-bottom: 4px;
+      }
+
+      .stage {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        padding: 12px;
+        min-height: 94px;
+      }
+
+      .stage strong {
+        display: block;
+        margin-bottom: 8px;
+      }
+
+      .module-grid {
+        grid-template-columns: 0.92fr 1.08fr;
+        align-items: start;
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .empty {
+        display: grid;
+        place-items: center;
+        min-height: 220px;
+        border: 1px dashed var(--line);
+        border-radius: 8px;
+        background: var(--surface-2);
+        color: var(--muted);
+        text-align: center;
+        padding: 24px;
+      }
+
+      .toast {
+        position: fixed;
+        right: 18px;
+        bottom: 18px;
+        z-index: 40;
+        display: none;
+        max-width: 360px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+        padding: 13px 14px;
+      }
+
+      .toast.show {
+        display: block;
+      }
+
+      .drawer {
+        position: fixed;
+        inset: 0;
+        z-index: 30;
+        display: none;
+      }
+
+      .drawer.open {
+        display: block;
+      }
+
+      .drawer-backdrop {
+        position: absolute;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.45);
+      }
+
+      .drawer-panel {
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: min(560px, 92vw);
+        height: 100%;
+        overflow: auto;
+        border-left: 1px solid var(--line);
+        background: var(--surface);
+        padding: 22px;
+      }
+
+      .skeleton {
+        overflow: hidden;
+        position: relative;
+        background: var(--surface-2);
+      }
+
+      .skeleton::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        transform: translateX(-100%);
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.34), transparent);
+        animation: shimmer 1.5s infinite;
+      }
+
+      @keyframes shimmer {
+        to {
+          transform: translateX(100%);
+        }
+      }
+
+      .route {
+        display: none;
+      }
+
+      .route.active {
+        display: block;
+      }
+
+      @media (max-width: 1180px) {
+        .kpi-grid {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .analytics-grid,
+        .module-grid,
+        .two-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .filters {
+          grid-template-columns: repeat(3, minmax(130px, 1fr));
+        }
+      }
+
+      @media (max-width: 820px) {
+        .app-shell {
+          grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+          position: fixed;
+          inset: 0 auto 0 0;
+          z-index: 50;
+          width: 280px;
+          transform: translateX(-100%);
+          transition: transform 180ms ease;
+        }
+
+        .sidebar.open {
+          transform: translateX(0);
+        }
+
+        .mobile-menu {
+          display: inline-flex;
+        }
+
+        .topbar {
+          align-items: flex-start;
+          padding: 14px 16px;
+        }
+
+        .top-actions {
+          flex-wrap: wrap;
+          justify-content: flex-end;
+        }
+
+        .search {
+          order: 5;
+          width: 100%;
+        }
+
+        .content {
+          padding: 18px 16px 36px;
+        }
+
+        .kpi-grid,
+        .three-grid,
+        .filters,
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+
+        h1 {
+          font-size: 21px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" id="sidebar">
+        <div class="brand">
+          <div class="brand-mark">IP</div>
+          <div>
+            <strong>Investment Portfolio</strong>
+            <span>Management System</span>
+          </div>
+        </div>
+
+        <div class="nav-section">Main Menu</div>
+        <nav id="navigation"></nav>
+
+        <div class="sidebar-card">
+          <div class="eyebrow">Delivery Roadmap</div>
+          <h3 style="margin-top: 4px">Phase 1 Foundation</h3>
+          <ul class="phase-list">
+            <li><span class="dot done"></span> Architecture baseline</li>
+            <li><span class="dot now"></span> Dashboard skeleton</li>
+            <li><span class="dot"></span> Laravel API build</li>
+            <li><span class="dot"></span> React production app</li>
+          </ul>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div style="display: flex; gap: 12px; align-items: flex-start">
+            <button class="icon-button mobile-menu" id="menuButton" title="Open navigation" aria-label="Open navigation">
+              <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+            </button>
+            <div>
+              <div class="breadcrumbs" id="breadcrumbs">Home / Dashboard</div>
+              <h1 id="pageTitle">Portfolio Command Center</h1>
+            </div>
+          </div>
+          <div class="top-actions">
+            <span class="badge">FY 2026</span>
+            <label class="search" title="Search projects, vendors, PIC, and BRD numbers">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+              <input id="globalSearch" placeholder="Search project, BRD, vendor..." />
+            </label>
+            <button class="icon-button" title="Notifications" aria-label="Notifications">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg>
+            </button>
+            <button class="icon-button" id="themeButton" title="Toggle dark mode" aria-label="Toggle dark mode">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a7 7 0 1 0 9 9 9 9 0 0 1-9-9Z"/></svg>
+            </button>
+            <button class="button" id="exportButton">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14"/></svg>
+              Export
+            </button>
+            <button class="button primary" id="newRequestButton">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+              New Request
+            </button>
+          </div>
+        </header>
+
+        <section class="content">
+          <section class="panel" style="margin-bottom: 18px">
+            <div class="panel-body filters" id="filters"></div>
+          </section>
+
+          <section id="Dashboard" class="route active">
+            <div class="grid kpi-grid" id="kpis"></div>
+            <div class="grid analytics-grid" style="margin-top: 16px">
+              <section class="panel">
+                <div class="panel-header">
+                  <div>
+                    <h2>Monthly Investment Trend</h2>
+                    <p class="small">Budget movement, realization, and project lead time signals.</p>
+                  </div>
+              <span class="badge">Power BI style</span>
+                </div>
+                <div class="panel-body">
+                  <svg class="chart" id="lineChart" viewBox="0 0 760 300" role="img" aria-label="Investment trend line chart"></svg>
+                </div>
+              </section>
+              <section class="panel">
+                <div class="panel-header">
+                  <div>
+                    <h2>Project Health</h2>
+                    <p class="small">Traffic light status generated from progress, issue severity, and due dates.</p>
+                  </div>
+                </div>
+                <div class="panel-body" id="healthBars"></div>
+              </section>
+            </div>
+
+            <div class="grid three-grid" style="margin-top: 16px">
+              <section class="panel">
+                <div class="panel-header"><h2>Investment by Division</h2><span class="badge">Top 5</span></div>
+                <div class="panel-body" id="divisionBars"></div>
+              </section>
+              <section class="panel">
+                <div class="panel-header"><h2>Budget vs Actual</h2><span class="badge">Portfolio</span></div>
+                <div class="panel-body" id="budgetBars"></div>
+              </section>
+              <section class="panel">
+                <div class="panel-header"><h2>Investment by Category</h2><span class="badge">Donut</span></div>
+                <div class="panel-body" id="categoryDonut"></div>
+              </section>
+            </div>
+
+            <div class="grid three-grid" style="margin-top: 16px">
+              <section class="panel">
+                <div class="panel-header"><h2>Upcoming Deadlines</h2><span class="badge">30-120 days</span></div>
+                <div class="panel-body timeline" id="deadlineList"></div>
+              </section>
+              <section class="panel">
+                <div class="panel-header"><h2>Recent Activity</h2><span class="badge">Audit trail</span></div>
+                <div class="panel-body timeline" id="activityList"></div>
+              </section>
+              <section class="panel">
+                <div class="panel-header"><h2>Latest Documents</h2><span class="badge">Repository</span></div>
+                <div class="panel-body timeline" id="documentList"></div>
+              </section>
+            </div>
+
+            <section class="panel" style="margin-top: 16px">
+              <div class="panel-header">
+                <div>
+                  <h2>Portfolio Table</h2>
+                  <p class="small">Portfolio control grid with health, progress, last activity, dates, and actions.</p>
+                </div>
+                <span class="badge" id="projectCount">0 records</span>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Project</th>
+                      <th>Division</th>
+                      <th>PIC</th>
+                      <th>Vendor</th>
+                      <th>Budget</th>
+                      <th>Progress</th>
+                      <th>Health</th>
+                      <th>Status</th>
+                      <th>Start</th>
+                      <th>Finish</th>
+                      <th>Last Activity</th>
+                      <th>Last Update</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="projectTable"></tbody>
+                </table>
+              </div>
+            </section>
+          </section>
+
+          <section id="Investment Request" class="route"></section>
+          <section id="Project Workspace" class="route"></section>
+          <section id="Documents" class="route"></section>
+          <section id="Analytics" class="route"></section>
+          <section id="Master Data" class="route"></section>
+          <section id="Settings" class="route"></section>
+        </section>
+      </main>
+    </div>
+
+    <div class="drawer" id="drawer" aria-hidden="true">
+      <div class="drawer-backdrop" id="drawerBackdrop"></div>
+      <aside class="drawer-panel">
+        <div class="panel-header" style="padding: 0 0 16px; margin-bottom: 16px">
+          <div>
+            <div class="eyebrow">Investment Request</div>
+            <h2>Register Approved BRD</h2>
+          </div>
+          <button class="icon-button" id="closeDrawer" title="Close form" aria-label="Close form">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <form class="form-grid" id="requestForm">
+          <div class="field"><label>BRD Number</label><input name="brd" required value="BRD-26013" /></div>
+          <div class="field"><label>Project Name</label><input name="name" required placeholder="Investment project name" /></div>
+          <div class="field"><label>Division</label><select name="division"><option>Supply Chain</option><option>Finance</option><option>Operations</option><option>Manufacturing</option></select></div>
+          <div class="field"><label>Department</label><input name="department" placeholder="Department" /></div>
+          <div class="field"><label>Site</label><select name="site"><option>Jakarta</option><option>Bandung</option><option>Surabaya</option><option>Medan</option><option>Makassar</option></select></div>
+          <div class="field"><label>Priority</label><select name="priority"><option>High</option><option>Medium</option><option>Low</option></select></div>
+          <div class="field"><label>Budget Requested</label><input name="budget" value="12500000000" /></div>
+          <div class="field"><label>Vendor</label><input name="vendor" placeholder="Vendor candidate" /></div>
+          <div class="field"><label>Planned Start</label><input name="start" type="date" value="2026-07-15" /></div>
+          <div class="field"><label>Planned Finish</label><input name="finish" type="date" value="2027-01-30" /></div>
+          <div class="field" style="grid-column: 1 / -1"><label>Business Justification</label><textarea name="objective" placeholder="Operational, financial, and strategic justification"></textarea></div>
+          <div style="grid-column: 1 / -1; display: flex; justify-content: flex-end; gap: 10px">
+            <button type="button" class="button" id="previewImportButton">Preview Import</button>
+            <button type="submit" class="button primary">Save Draft</button>
+          </div>
+        </form>
+      </aside>
+    </div>
+
+    <div class="toast" id="toast">
+      <strong id="toastTitle">Saved</strong>
+      <p class="small" id="toastText">Action completed.</p>
+    </div>
+
+    <script>
+      let projects = [
+        { brd: "BRD-26001", name: "Warehouse Automation Line", division: "Supply Chain", department: "Warehouse", site: "Jakarta", category: "Automation", priority: "High", status: "Running", health: "Yellow", pic: "Ari Wibowo", vendor: "Siemens", budget: 20000000000, approved: 18500000000, actual: 13600000000, progress: 68, start: "2026-01-10", finish: "2026-09-30", approvalDays: 18 },
+        { brd: "BRD-26002", name: "ERP Finance Extension", division: "Finance", department: "Accounting", site: "Bandung", category: "IT System", priority: "High", status: "Under Review", health: "Green", pic: "Dina Putri", vendor: "SAP Partner Indonesia", budget: 9500000000, approved: 9200000000, actual: 2100000000, progress: 22, start: "2026-03-01", finish: "2026-12-15", approvalDays: 31 },
+        { brd: "BRD-26003", name: "Solar Rooftop Phase 2", division: "Operations", department: "Utility", site: "Surabaya", category: "Energy", priority: "Medium", status: "Completed", health: "Green", pic: "Raka Santoso", vendor: "Schneider Electric", budget: 14500000000, approved: 14200000000, actual: 13900000000, progress: 100, start: "2025-08-20", finish: "2026-04-10", approvalDays: 14 },
+        { brd: "BRD-26004", name: "Quality Lab Upgrade", division: "Quality", department: "Laboratory", site: "Medan", category: "Equipment", priority: "Medium", status: "Running", health: "Yellow", pic: "Maya Sari", vendor: "Local Contractor", budget: 7000000000, approved: 6800000000, actual: 3800000000, progress: 57, start: "2026-02-14", finish: "2026-08-31", approvalDays: 21 },
+        { brd: "BRD-26005", name: "Cold Chain Expansion", division: "Logistics", department: "Distribution", site: "Makassar", category: "Infrastructure", priority: "High", status: "Overdue", health: "Red", pic: "Fajar Nugraha", vendor: "Local Contractor", budget: 24000000000, approved: 23100000000, actual: 19300000000, progress: 74, start: "2025-11-01", finish: "2026-05-30", approvalDays: 27 },
+        { brd: "BRD-26006", name: "HR Workforce Analytics", division: "Human Capital", department: "HRIS", site: "Jakarta", category: "IT System", priority: "Low", status: "Completed", health: "Green", pic: "Nadia Lestari", vendor: "Telkomsigma", budget: 3900000000, approved: 3600000000, actual: 3500000000, progress: 100, start: "2025-10-12", finish: "2026-02-28", approvalDays: 12 },
+        { brd: "BRD-26007", name: "Packaging Robot Cell", division: "Manufacturing", department: "Packing", site: "Semarang", category: "Automation", priority: "High", status: "Submitted", health: "Yellow", pic: "Yusuf Hakim", vendor: "Siemens", budget: 12500000000, approved: 11800000000, actual: 1600000000, progress: 15, start: "2026-07-01", finish: "2027-01-30", approvalDays: 36 },
+        { brd: "BRD-26008", name: "Fleet Telematics Platform", division: "Logistics", department: "Transport", site: "Bandung", category: "IT System", priority: "Medium", status: "Procurement", health: "Green", pic: "Clara Tan", vendor: "Telkomsigma", budget: 6200000000, approved: 5900000000, actual: 2500000000, progress: 41, start: "2026-04-05", finish: "2026-11-20", approvalDays: 19 },
+        { brd: "BRD-26009", name: "Water Treatment Retrofit", division: "Operations", department: "Utility", site: "Medan", category: "Sustainability", priority: "High", status: "Overdue", health: "Red", pic: "Bima Prakoso", vendor: "Schneider Electric", budget: 8100000000, approved: 7600000000, actual: 5700000000, progress: 63, start: "2025-12-01", finish: "2026-05-15", approvalDays: 24 },
+        { brd: "BRD-26010", name: "Customer Data Platform", division: "Commercial", department: "Digital", site: "Jakarta", category: "IT System", priority: "Medium", status: "Running", health: "Yellow", pic: "Tania Rahman", vendor: "Accenture", budget: 13500000000, approved: 12800000000, actual: 4100000000, progress: 34, start: "2026-05-01", finish: "2026-12-31", approvalDays: 16 },
+        { brd: "BRD-26011", name: "Regional Office Renovation", division: "General Affairs", department: "Facilities", site: "Surabaya", category: "Infrastructure", priority: "Low", status: "Completed", health: "Green", pic: "Rio Saputra", vendor: "Local Contractor", budget: 4500000000, approved: 4300000000, actual: 4200000000, progress: 100, start: "2025-09-01", finish: "2026-01-30", approvalDays: 10 },
+        { brd: "BRD-26012", name: "Supplier Portal", division: "Procurement", department: "Strategic Sourcing", site: "Jakarta", category: "IT System", priority: "Medium", status: "Under Review", health: "Green", pic: "Salsa Kirana", vendor: "Accenture", budget: 5200000000, approved: 4800000000, actual: 900000000, progress: 18, start: "2026-08-01", finish: "2027-03-15", approvalDays: 29 },
+      ];
+
+      let issues = [
+        { project: "Cold Chain Expansion", title: "Civil handover delay", severity: "Critical", due: "2026-06-07", owner: "Fajar Nugraha", status: "Open" },
+        { project: "Water Treatment Retrofit", title: "Commissioning defect", severity: "Critical", due: "2026-06-12", owner: "Bima Prakoso", status: "Open" },
+        { project: "Warehouse Automation Line", title: "PLC integration retest", severity: "High", due: "2026-07-02", owner: "Ari Wibowo", status: "In Progress" },
+        { project: "Quality Lab Upgrade", title: "Calibration certificate pending", severity: "Medium", due: "2026-07-10", owner: "Maya Sari", status: "Open" },
+      ];
+
+      let activities = [
+        { date: "2026-06-28", type: "Committee Meeting", project: "Supplier Portal", text: "Revision notes recorded from investment committee." },
+        { date: "2026-06-27", type: "Purchase Order", project: "Fleet Telematics Platform", text: "PO released and delivery schedule confirmed." },
+        { date: "2026-06-25", type: "Installation", project: "Quality Lab Upgrade", text: "Equipment installation reached 57% progress." },
+        { date: "2026-06-24", type: "Issue Update", project: "Cold Chain Expansion", text: "Critical delay escalated for weekly steering review." },
+      ];
+      let documents = [];
+
+      const trend = [
+        ["Jan", 28.4, 21.2],
+        ["Feb", 32.1, 24.5],
+        ["Mar", 25.8, 19.1],
+        ["Apr", 41.7, 27.9],
+        ["May", 36.9, 31.4],
+        ["Jun", 52.5, 37.6],
+        ["Jul", 46.2, 34.2],
+        ["Aug", 58.1, 45.4],
+        ["Sep", 61.8, 50.8],
+        ["Oct", 54.3, 43.1],
+        ["Nov", 64.5, 55.7],
+        ["Dec", 72.4, 63.2],
+      ];
+
+      const navItems = ["Dashboard", "Investment Request", "Project Workspace", "Documents", "Analytics", "Master Data", "Settings"];
+
+      const icons = {
+        Dashboard: "M4 13h7V4H4v9Zm9 7h7V4h-7v16ZM4 20h7v-5H4v5Z",
+        "Investment Request": "M6 3h12v18H6V3Zm4 5h4m-4 4h4m-4 4h3",
+        "Approval Tracking": "m9 12 2 2 4-5M12 3l8 4v5c0 5-3.4 8-8 9-4.6-1-8-4-8-9V7l8-4Z",
+        Procurement: "M4 7h16M6 7l1 13h10l1-13M9 7V5h6v2M9 12h6",
+        Projects: "M4 5h16v14H4V5Zm4 4h8M8 13h5",
+        "Project Workspace": "M4 5h16v14H4V5Zm4 4h8M8 13h5",
+        "Project Activity": "M12 6v6l4 2M21 12a9 9 0 1 1-9-9",
+        Issues: "M12 9v4m0 4h.01M10.3 4.5 2-1.1 9 15.6H3.3l7-14.5Z",
+        "Project Review": "M5 4h14v16H5V4Zm4 4h6m-6 4h6m-6 4h4",
+        Documents: "M7 3h7l5 5v13H7V3Zm7 0v5h5",
+        Analytics: "M4 19l5-7 4 3 7-10M4 5h16v14H4V5Z",
+        "Master Data": "M4 6c0-1.1 3.6-2 8-2s8 .9 8 2-3.6 2-8 2-8-.9-8-2Zm0 0v12c0 1.1 3.6 2 8 2s8-.9 8-2V6",
+        Settings: "M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm8 4h2M2 12h2m12.9-6.9 1.4-1.4M5.7 18.3l1.4-1.4m0-11.8L5.7 3.7m12.6 14.6-1.4-1.4",
+      };
+
+      const state = {
+        route: "Dashboard",
+        search: "",
+        filters: {
+          year: "2026",
+          division: "All",
+          site: "All",
+          category: "All",
+          status: "All",
+          priority: "All",
+        },
+      };
+
+      function idr(value) {
+        if (value >= 1000000000000) return `Rp ${(value / 1000000000000).toFixed(1)} T`;
+        return `Rp ${(value / 1000000000).toFixed(1)} B`;
+      }
+
+      function svgIcon(name) {
+        return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${icons[name] || icons.Dashboard}"/></svg>`;
+      }
+
+      function unique(key) {
+        return ["All", ...Array.from(new Set(projects.map((item) => item[key]))).sort()];
+      }
+
+      function statusClass(status) {
+        if (status === "Completed") return "status-completed";
+        if (status === "Overdue") return "status-overdue";
+        if (status === "Under Review" || status === "Submitted") return "status-review";
+        return "status-running";
+      }
+
+      function healthLabel(project) {
+        const health = project.health || (project.status === "Overdue" ? "Red" : project.progress >= 80 ? "Green" : "Yellow");
+        if (health === "Red") return ["Critical", "status-critical"];
+        if (health === "Yellow") return ["Need Attention", "status-pending"];
+        return ["Healthy", "status-completed"];
+      }
+
+      function lastActivityFor(project) {
+        const match = activities.find((item) => item.projectId === project.id || item.project === project.name);
+        return match ? `${match.type || "Activity"} (${match.date || "-"})` : project.remarks || "-";
+      }
+
+      function filteredProjects() {
+        const q = state.search.trim().toLowerCase();
+        return projects.filter((project) => {
+          const passFilters = ["division", "site", "category", "status", "priority"].every((key) => state.filters[key] === "All" || project[key] === state.filters[key]);
+          const haystack = `${project.brd} ${project.name} ${project.division} ${project.site} ${project.category} ${project.pic} ${project.vendor}`.toLowerCase();
+          return passFilters && (!q || haystack.includes(q));
+        });
+      }
+
+      function renderNav() {
+        document.getElementById("navigation").innerHTML = navItems.map((item) => `
+          <button class="nav-button ${state.route === item ? "active" : ""}" data-route="${item}">
+            ${svgIcon(item)}
+            <span>${item}</span>
+          </button>
+        `).join("");
+      }
+
+      function renderFilters() {
+        const config = [
+          ["year", "Year", ["2026", "2025", "2024"]],
+          ["division", "Division", unique("division")],
+          ["site", "Site", unique("site")],
+          ["category", "Category", unique("category")],
+          ["status", "Status", unique("status")],
+          ["priority", "Priority", unique("priority")],
+        ];
+
+        document.getElementById("filters").innerHTML = config.map(([key, label, options]) => `
+          <div class="field">
+            <label for="filter-${key}">${label}</label>
+            <select id="filter-${key}" data-filter="${key}">
+              ${options.map((option) => `<option ${state.filters[key] === option ? "selected" : ""}>${option}</option>`).join("")}
+            </select>
+          </div>
+        `).join("");
+      }
+
+      function renderKpis(rows) {
+        const totalApproved = rows.reduce((sum, item) => sum + item.approved, 0);
+        const totalActual = rows.reduce((sum, item) => sum + item.actual, 0);
+        const completed = rows.filter((item) => item.status === "Completed").length;
+        const running = rows.filter((item) => ["Running", "Procurement"].includes(item.status)).length;
+        const pending = rows.filter((item) => ["Submitted", "Under Review"].includes(item.status)).length;
+        const overdue = rows.filter((item) => item.status === "Overdue").length;
+        const utilization = totalApproved ? Math.round((totalActual / totalApproved) * 100) : 0;
+
+        const cards = [
+          ["Total Investment", idr(totalApproved), "+12.8% vs last month", "good"],
+          ["Total Projects", rows.length, "+4 new requests", "good"],
+          ["Running Projects", running, "Execution portfolio", "good"],
+          ["Completed Projects", completed, "+2 closed", "good"],
+          ["Pending Projects", pending, "Need admin follow-up", "warn"],
+          ["Overdue Projects", overdue, "Auto-detected delay", overdue ? "bad" : "good"],
+          ["Budget Utilization", `${utilization}%`, `${idr(totalActual)} actual`, utilization > 85 ? "warn" : "good"],
+          ["Avg. Duration", "204 days", "Portfolio average", "good"],
+          ["Open Issues", issues.filter((item) => item.status !== "Closed").length, "Across active projects", "warn"],
+          ["Critical Issues", issues.filter((item) => item.severity === "Critical").length, "Escalation required", "bad"],
+        ];
+
+        document.getElementById("kpis").innerHTML = cards.map(([label, value, note, tone]) => `
+          <article class="panel kpi">
+            <div class="kpi-top"><span>${label}</span><span class="trend ${tone}">${tone === "bad" ? "!" : tone === "warn" ? "Watch" : "OK"}</span></div>
+            <div class="kpi-value">${value}</div>
+            <div class="kpi-note">${note}</div>
+            <svg viewBox="0 0 120 24" style="width:100%;height:24px;margin-top:10px" aria-hidden="true">
+              <polyline points="0,18 18,15 36,17 54,10 72,12 90,6 120,8" fill="none" stroke="${tone === "bad" ? "var(--red)" : tone === "warn" ? "var(--amber)" : "var(--green)"}" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+          </article>
+        `).join("");
+      }
+
+      function renderLineChart() {
+        const svg = document.getElementById("lineChart");
+        const max = 80;
+        const pointsBudget = trend.map(([month, budget], i) => [64 + i * 58, 250 - (budget / max) * 200]);
+        const pointsActual = trend.map(([month, , actual], i) => [64 + i * 58, 250 - (actual / max) * 200]);
+        const line = (points) => points.map((point) => point.join(",")).join(" ");
+        const grid = [0, 20, 40, 60, 80].map((value) => {
+          const y = 250 - (value / max) * 200;
+          return `<line x1="52" x2="720" y1="${y}" y2="${y}" stroke="var(--line)" stroke-width="1"/><text x="18" y="${y + 4}" fill="var(--muted)" font-size="11">${value}B</text>`;
+        }).join("");
+        const labels = trend.map(([month], i) => `<text x="${58 + i * 58}" y="282" fill="var(--muted)" font-size="11">${month}</text>`).join("");
+        svg.innerHTML = `
+          ${grid}
+          ${labels}
+          <polyline points="${line(pointsBudget)}" fill="none" stroke="var(--primary)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          <polyline points="${line(pointsActual)}" fill="none" stroke="var(--teal)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          ${pointsBudget.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="4" fill="var(--primary)"/>`).join("")}
+          ${pointsActual.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="4" fill="var(--teal)"/>`).join("")}
+          <text x="548" y="28" fill="var(--primary)" font-size="12" font-weight="700">Budget Trend</text>
+          <text x="646" y="28" fill="var(--teal)" font-size="12" font-weight="700">Actual</text>
+        `;
+      }
+
+      function groupedBars(containerId, rows, key, valueKey, limit = 6) {
+        const totals = rows.reduce((acc, item) => {
+          acc[item[key]] = (acc[item[key]] || 0) + item[valueKey];
+          return acc;
+        }, {});
+        const sorted = Object.entries(totals).sort((a, b) => b[1] - a[1]).slice(0, limit);
+        const max = Math.max(...sorted.map(([, value]) => value), 1);
+        document.getElementById(containerId).innerHTML = sorted.map(([label, value]) => `
+          <div class="bar-row">
+            <strong class="small">${label}</strong>
+            <div class="bar-track"><div class="bar" style="width:${Math.max(6, (value / max) * 100)}%"></div></div>
+            <span class="small">${idr(value)}</span>
+          </div>
+        `).join("");
+      }
+
+      function renderHealthBars(rows) {
+        const health = ["Green", "Yellow", "Red"].map((label) => [label, rows.filter((item) => item.health === label).length]);
+        const max = Math.max(...health.map(([, value]) => value), 1);
+        document.getElementById("healthBars").innerHTML = health.map(([label, value]) => {
+          const color = label === "Green" ? "var(--green)" : label === "Yellow" ? "var(--amber)" : "var(--red)";
+          return `
+            <div class="bar-row">
+              <strong class="small">${label}</strong>
+              <div class="bar-track"><div class="bar" style="width:${(value / max) * 100}%; background:${color}"></div></div>
+              <span class="small">${value}</span>
+            </div>
+          `;
+        }).join("") + `
+          <div class="empty" style="min-height: 104px; margin-top: 18px">
+            <div>
+              <strong>Automated risk logic</strong>
+              <p class="small">Overdue date + critical issues + progress variance drive the traffic light status.</p>
+            </div>
+          </div>
+        `;
+      }
+
+      function renderBudgetBars(rows) {
+        const sample = rows.slice(0, 6);
+        const max = Math.max(...sample.map((item) => Math.max(item.approved || 0, item.actual || 0)), 1);
+        document.getElementById("budgetBars").innerHTML = sample.map((item) => `
+          <div style="margin: 12px 0">
+            <div style="display:flex;justify-content:space-between;gap:10px;margin-bottom:6px">
+              <strong class="small">${item.brd}</strong>
+              <span class="small">${idr(item.actual || 0)} / ${idr(item.approved || 0)}</span>
+            </div>
+            <div class="bar-track" style="height:18px"><div class="bar" style="width:${Math.max(4, ((item.approved || 0) / max) * 100)}%; background:var(--line)"></div></div>
+            <div class="bar-track" style="height:8px;margin-top:-13px"><div class="bar" style="width:${Math.max(4, ((item.actual || 0) / max) * 100)}%; background:var(--green)"></div></div>
+          </div>
+        `).join("") || `<div class="empty"><strong>No budget data</strong></div>`;
+      }
+
+      function renderCategoryDonut(rows) {
+        const totals = Object.entries(rows.reduce((acc, item) => {
+          acc[item.category || "Uncategorized"] = (acc[item.category || "Uncategorized"] || 0) + Number(item.approved || 0);
+          return acc;
+        }, {})).sort((a, b) => b[1] - a[1]).slice(0, 5);
+        const total = totals.reduce((sum, [, value]) => sum + value, 0) || 1;
+        const colors = ["#0F172A", "#10B981", "#F59E0B", "#2563EB", "#BE123C"];
+        let offset = 25;
+        const segments = totals.map(([label, value], index) => {
+          const size = (value / total) * 100;
+          const segment = `${colors[index]} ${offset}% ${offset + size}%`;
+          offset += size;
+          return segment;
+        }).join(", ");
+        document.getElementById("categoryDonut").innerHTML = `
+          <div style="display:grid;grid-template-columns:140px 1fr;gap:18px;align-items:center">
+            <div style="width:132px;height:132px;border-radius:999px;background:conic-gradient(${segments});display:grid;place-items:center">
+              <div style="width:74px;height:74px;border-radius:999px;background:var(--surface);display:grid;place-items:center;font-weight:800">${totals.length}</div>
+            </div>
+            <div>
+              ${totals.map(([label, value], index) => `
+                <div class="bar-row" style="grid-template-columns:10px 1fr auto;margin:8px 0">
+                  <span style="width:10px;height:10px;border-radius:99px;background:${colors[index]}"></span>
+                  <strong class="small">${label}</strong>
+                  <span class="small">${Math.round((value / total) * 100)}%</span>
+                </div>
+              `).join("")}
+            </div>
+          </div>
+        `;
+      }
+
+      function renderTimeline() {
+        const deadlines = [...projects]
+          .sort((a, b) => new Date(a.finish) - new Date(b.finish))
+          .slice(0, 4);
+        document.getElementById("deadlineList").innerHTML = deadlines.map((item) => `
+          <div class="timeline-item">
+            <span class="timeline-node"></span>
+            <div class="timeline-card">
+              <strong>${item.name}</strong>
+              <p>${item.finish} / ${item.pic} / ${item.status}</p>
+            </div>
+          </div>
+        `).join("");
+
+        document.getElementById("activityList").innerHTML = activities.map((item) => `
+          <div class="timeline-item">
+            <span class="timeline-node"></span>
+            <div class="timeline-card">
+              <strong>${item.type}</strong>
+              <p>${item.date} / ${item.project}</p>
+              <p>${item.text}</p>
+            </div>
+          </div>
+        `).join("");
+
+        document.getElementById("documentList").innerHTML = (documents.length ? documents.slice(0, 4) : [
+          { "File Name": "BRD Portfolio.xlsx", Project: "Portfolio", "Upload Date": "2026-06-29", "Uploaded By": "Investment Admin" },
+        ]).map((item) => `
+          <div class="timeline-item">
+            <span class="timeline-node"></span>
+            <div class="timeline-card">
+              <strong>${item["File Name"] || item.fileName || item.category || "Document"}</strong>
+              <p>${item.Project || item.project || item["Project ID"] || "-"} / ${item["Upload Date"] || item.uploadDate || "-"} / ${item["Uploaded By"] || item.uploadedBy || "-"}</p>
+            </div>
+          </div>
+        `).join("");
+      }
+
+      function renderTable(rows) {
+        document.getElementById("projectCount").textContent = `${rows.length} records`;
+        document.getElementById("projectTable").innerHTML = rows.length ? rows.map((project) => `
+          <tr>
+            <td><strong>${project.name}</strong><br><span class="small">${project.brd}</span></td>
+            <td>${project.division}</td>
+            <td>${project.pic}</td>
+            <td>${project.vendor || "-"}</td>
+            <td>${idr(project.approved || project.budget || 0)}</td>
+            <td>
+              <div class="progress">
+                <div class="progress-track"><div class="progress-fill" style="width:${project.progress}%"></div></div>
+                <span class="small">${project.progress}%</span>
+              </div>
+            </td>
+            <td><span class="status-pill ${healthLabel(project)[1]}">${healthLabel(project)[0]}</span></td>
+            <td><span class="status-pill ${statusClass(project.status)}">${project.status}</span></td>
+            <td>${project.start || "-"}</td>
+            <td>${project.finish || "-"}</td>
+            <td>${lastActivityFor(project)}</td>
+            <td>${project.updatedAt ? project.updatedAt.slice(0, 10) : project.finish || "-"}</td>
+            <td><button class="button" style="min-height:32px;padding:0 10px">Open</button></td>
+          </tr>
+        `).join("") : `<tr><td colspan="13"><div class="empty"><div><strong>No records match the current filter.</strong><p class="small">Adjust filters or search terms to see portfolio data.</p></div></div></td></tr>`;
+      }
+
+      function moduleTemplate(title, summary, primary, secondary) {
+        return `
+          <div class="grid module-grid">
+            <section class="panel">
+              <div class="panel-header">
+                <div>
+                  <h2>${title}</h2>
+                  <p class="small">${summary}</p>
+                </div>
+                <span class="badge">Phase 1 scaffold</span>
+              </div>
+              <div class="panel-body">${primary}</div>
+            </section>
+            <section class="panel">
+              <div class="panel-header">
+                <h2>Production Architecture</h2>
+                <span class="badge">Laravel 12 + React 19</span>
+              </div>
+              <div class="panel-body">${secondary}</div>
+            </section>
+          </div>
+        `;
+      }
+
+      function renderModules() {
+        document.getElementById("Investment Request").innerHTML = moduleTemplate(
+          "Investment Request",
+          "Registration workflow for approved BRD-based investment projects.",
+          `
+            <div class="form-grid">
+              <div class="field"><label>BRD Number</label><input value="BRD-26013"></div>
+              <div class="field"><label>Status</label><select><option>Draft</option><option>Submitted</option><option>Under Review</option><option>Approved</option></select></div>
+              <div class="field"><label>Project Name</label><input placeholder="Project name"></div>
+              <div class="field"><label>Budget Approved</label><input placeholder="0"></div>
+              <div class="field" style="grid-column:1/-1"><label>Project Objective</label><textarea placeholder="Objective and business justification"></textarea></div>
+            </div>
+          `,
+          architectureList(["Repository: ProjectRepository", "Service: ProjectService with transactions", "Request: StoreProjectRequest / UpdateProjectRequest", "Resource: ProjectResource", "Policy: ProjectPolicy", "Soft delete + audit activity log"])
+        );
+
+        document.getElementById("Project Workspace").innerHTML = moduleTemplate(
+          "Project Workspace",
+          "Dedicated project control room with Overview, Activity, Documents, Review, and Settings tabs.",
+          `
+            <div class="workflow">${["Overview", "Activity", "Documents", "Review", "Settings"].map((tab, index) => `<div class="stage"><strong>${tab}</strong><span class="status-pill ${index === 0 ? "status-running" : "status-completed"}">${index === 0 ? "Active" : "Ready"}</span><p class="small" style="margin-top:8px">${tab === "Activity" ? "Daily project log and timeline." : tab === "Review" ? "Final report and lessons learned." : "Workspace module."}</p></div>`).join("")}</div>
+            <div class="table-wrap" style="margin-top:16px"><table><thead><tr><th>Project</th><th>Health</th><th>Progress</th><th>Latest Activity</th></tr></thead><tbody>${projects.slice(0, 8).map((p) => `<tr><td>${p.name}</td><td><span class="status-pill ${healthLabel(p)[1]}">${healthLabel(p)[0]}</span></td><td>${p.progress}%</td><td>${lastActivityFor(p)}</td></tr>`).join("")}</tbody></table></div>
+          `,
+          architectureList(["Overview: delay, variance, duration", "Activity: create/edit/delete timeline log", "Documents: upload, preview, version history", "Review: auto-generate when completed", "Settings: status, vendor, PIC, priority, archive"])
+        );
+
+        document.getElementById("Documents").innerHTML = moduleTemplate(
+          "Document Management",
+          "Per-project repository with categories, upload, preview, download, versioning, and revision history.",
+          `<div class="grid three-grid">${["BRD", "Approval Letter", "Vendor Quotation", "Purchase Order", "Contract", "BAST", "Progress Report", "Final Report", "Benefit Realization"].map((item) => `<div class="stage"><strong>${item}</strong><span class="badge">v1.0</span><p class="small" style="margin-top:8px">Secure storage, metadata, remarks.</p></div>`).join("")}</div>`,
+          architectureList(["project_documents table", "Version chain", "Private disk storage", "Preview/download signed route", "MIME and size validation"])
+        );
+
+        document.getElementById("Analytics").innerHTML = moduleTemplate(
+          "Executive Analytics",
+          "Interactive filters for investment trend, budget trend, pipeline, health, issue trend, completion rate, and lead time.",
+          `<div class="panel-body" style="padding:0"><svg class="chart" viewBox="0 0 760 300">${document.getElementById("lineChart") ? document.getElementById("lineChart").innerHTML : ""}</svg></div>`,
+          architectureList(["DashboardController", "AnalyticsService", "Aggregate query objects", "Export Excel/PDF/CSV", "Cache by filter hash"])
+        );
+
+        document.getElementById("Master Data").innerHTML = moduleTemplate(
+          "Master Data",
+          "CRUD scaffolds for divisions, departments, sites, vendors, project categories, statuses, priorities, issue categories, and severities.",
+          `<div class="grid three-grid">${["Division", "Department", "Site", "Vendor", "Project Category", "Project Status", "Priority", "Issue Category", "Issue Severity"].map((item) => `<div class="stage"><strong>${item}</strong><p class="small">Create, edit, archive, search.</p></div>`).join("")}</div>`,
+          architectureList(["Shared MasterDataController", "Dedicated migrations/models/factories/seeders", "Unique constraints", "Soft delete", "Active/inactive filters"])
+        );
+
+        document.getElementById("Settings").innerHTML = moduleTemplate(
+          "Settings",
+          "Role permissions, audit trail, queues, scheduler, notifications, import/export, and deployment readiness.",
+          `<div class="grid two-grid">${["Investment Admin role", "Spatie Permission ready", "Laravel Sanctum API", "Audit Activity Log", "Queue Notifications", "Excel Import Preview", "PDF Export", "Secure File Storage"].map((item) => `<div class="stage"><strong>${item}</strong><p class="small">Configured in production implementation plan.</p></div>`).join("")}</div>`,
+          architectureList(["Laravel Breeze auth", "Sanctum token strategy", "Policy per module", "Central API error envelope", "PHPUnit feature and service tests", "Deployment checklist"])
+        );
+      }
+
+      function architectureList(items) {
+        return `<div class="timeline">${items.map((item) => `<div class="timeline-item"><span class="timeline-node"></span><div class="timeline-card"><strong>${item}</strong><p>Prepared for the future full-stack implementation path.</p></div></div>`).join("")}</div>`;
+      }
+
+      function timelineMarkup(items) {
+        return `<div class="timeline">${items.map(([title, text]) => `<div class="timeline-item"><span class="timeline-node"></span><div class="timeline-card"><strong>${title}</strong><p>${text}</p></div></div>`).join("")}</div>`;
+      }
+
+      function showToast(title, text) {
+        const toast = document.getElementById("toast");
+        document.getElementById("toastTitle").textContent = title;
+        document.getElementById("toastText").textContent = text;
+        toast.classList.add("show");
+        clearTimeout(showToast.timer);
+        showToast.timer = setTimeout(() => toast.classList.remove("show"), 2600);
+      }
+
+      function saveProjectFromForm(form) {
+        const values = Object.fromEntries(new FormData(form).entries());
+        const saved = {
+          id: `mock-${Date.now()}`,
+          ...values,
+          category: "IT System",
+          status: "Draft",
+          health: "Green",
+          pic: "Investment Admin",
+          approved: Number(values.budget || 0),
+          actual: 0,
+          progress: 0,
+          approvalDays: 0,
+          budget: Number(values.budget || 0),
+          remarks: "Created in the static GitHub Pages preview.",
+          updatedAt: new Date().toISOString(),
+        };
+        projects = [saved, ...projects.filter((project) => project.id !== saved.id)];
+        render();
+        return saved;
+      }
+
+      function setRoute(route) {
+        state.route = route;
+        document.querySelectorAll(".route").forEach((node) => node.classList.toggle("active", node.id === route));
+        document.getElementById("pageTitle").textContent = route === "Dashboard" ? "Portfolio Command Center" : route;
+        document.getElementById("breadcrumbs").textContent = `Home / ${route}`;
+        document.getElementById("sidebar").classList.remove("open");
+        renderNav();
+      }
+
+      function render() {
+        const rows = filteredProjects();
+        renderNav();
+        renderFilters();
+        renderKpis(rows);
+        renderLineChart();
+        renderHealthBars(rows);
+        groupedBars("divisionBars", rows, "division", "approved", 5);
+        renderBudgetBars(rows);
+        renderCategoryDonut(rows);
+        renderTimeline();
+        renderTable(rows);
+        renderModules();
+      }
+
+      document.addEventListener("click", (event) => {
+        const routeButton = event.target.closest("[data-route]");
+        if (routeButton) setRoute(routeButton.dataset.route);
+      });
+
+      document.addEventListener("change", (event) => {
+        const filter = event.target.dataset.filter;
+        if (filter) {
+          state.filters[filter] = event.target.value;
+          render();
+        }
+      });
+
+      document.getElementById("globalSearch").addEventListener("input", (event) => {
+        state.search = event.target.value;
+        render();
+      });
+
+      document.getElementById("themeButton").addEventListener("click", () => {
+        const next = document.body.dataset.theme === "dark" ? "" : "dark";
+        document.body.dataset.theme = next;
+        localStorage.setItem("ims-theme", next);
+      });
+
+      document.getElementById("exportButton").addEventListener("click", () => showToast("Export queued", "Excel, PDF, and CSV exports are represented in this preview."));
+      document.getElementById("newRequestButton").addEventListener("click", () => document.getElementById("drawer").classList.add("open"));
+      document.getElementById("drawerBackdrop").addEventListener("click", () => document.getElementById("drawer").classList.remove("open"));
+      document.getElementById("closeDrawer").addEventListener("click", () => document.getElementById("drawer").classList.remove("open"));
+      document.getElementById("menuButton").addEventListener("click", () => document.getElementById("sidebar").classList.add("open"));
+      document.getElementById("previewImportButton").addEventListener("click", () => showToast("Import preview ready", "Validation, duplicate detection, and error report flow are scaffolded."));
+      document.getElementById("requestForm").addEventListener("submit", (event) => {
+        event.preventDefault();
+        try {
+          const saved = saveProjectFromForm(event.currentTarget);
+          document.getElementById("drawer").classList.remove("open");
+          showToast("Draft added", `${saved.brd} was added to the static preview data.`);
+        } catch (error) {
+          showToast("Save failed", error.message);
+        }
+      });
+
+      document.body.dataset.theme = localStorage.getItem("ims-theme") || "";
+      render();
+    </script>
+  </body>
+</html>
