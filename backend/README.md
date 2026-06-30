@@ -1,6 +1,12 @@
-# IMS Local Backend
+# IPMS Local Backend
 
-Backend ini dibuat untuk simulasi integrasi awal sebelum full Laravel 12 dibangun.
+Backend ini adalah API lokal untuk simulasi sebelum implementasi Laravel 12 asli.
+
+Catatan:
+- Tidak membutuhkan dependency npm.
+- Data disimpan di `backend/data/ims-db.json`.
+- API memakai pola REST dengan response envelope `{ ok, data, meta }`.
+- Frontend GitHub Pages tetap bisa static; backend ini opsional untuk simulasi lokal.
 
 ## Run
 
@@ -14,20 +20,53 @@ Default URL:
 http://127.0.0.1:58080
 ```
 
-## Endpoint Utama
+## Core Endpoints
 
 - `GET /api/health`
 - `GET /api/dashboard`
-- `GET /api/projects`
-- `POST /api/projects`
-- `GET /api/projects/{id}`
-- `PATCH /api/projects/{id}`
-- `DELETE /api/projects/{id}`
-- `GET /api/project-issues`
-- `GET /api/project-activities`
-- `GET /api/project-approvals`
-- `GET /api/project-procurements`
-- `GET /api/project-documents`
 - `GET /api/master-data`
 
-Data disimpan di `backend/data/ims-db.json`, jadi hasil simulasi edit akan tetap tersimpan selama file ini tidak dihapus.
+## Projects
+
+- `GET /api/projects`
+- `POST /api/projects`
+- `GET /api/projects/{id-or-brd}`
+- `PATCH /api/projects/{id-or-brd}`
+- `DELETE /api/projects/{id-or-brd}`
+
+Query support:
+
+```text
+?search=&division=&site=&category=&status=&priority=&pic=&health=&sort=approved&direction=desc&page=1&perPage=10
+```
+
+## Project Workspace
+
+- `GET /api/project-workspaces/{id-or-brd}`
+
+Returns project overview, duration, budget variance, budget utilization, delay status, activities, documents, issues, and review data.
+
+## Module Collections
+
+Each supports:
+
+- `GET /endpoint`
+- `POST /endpoint`
+- `GET /endpoint/{id}`
+- `PATCH /endpoint/{id}`
+- `DELETE /endpoint/{id}`
+
+Endpoints:
+
+- `/api/project-activities`
+- `/api/project-issues`
+- `/api/project-approvals`
+- `/api/project-procurements`
+- `/api/project-documents`
+- `/api/project-reviews`
+
+## Report Preview
+
+- `GET /api/reports/project-review/{id-or-brd}`
+
+Returns structured JSON sections for a future PDF generator.
